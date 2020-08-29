@@ -1,0 +1,74 @@
+Web scanning represents one of the core constructs of modern pen testing. Quite simply, most of what we interact with on a daily basis is the internet, and therein there is a multitude of ever-widening number of vulnerabilities. Within this room, we will investigate two of the most common scanners: Nikto and Zap. 
+
+Task 2 is a quiz/ solving problems so we will start it
+all the answers are in the man page so i will only be writing the ones which are a bit confusing or difficult
+
+
+2.2
+Websites don't always properly redirect to their secure transport port and can sometimes have different issues depending on the manner in which they are scanned. How do we disable secure transport?
+
+answer ---------> -nossl
+
+nikto -h 10.10.159.85 
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          10.10.159.85
++ Target Hostname:    10.10.159.85
++ Target Port:        80
++ Start Time:         2020-05-05 11:51:13 (GMT-4)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.7 (Ubuntu)
++ Cookie PHPSESSID created without the httponly flag
++ Retrieved x-powered-by header: PHP/5.5.9-1ubuntu4.26
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ Root page / redirects to: login.php
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ Apache/2.4.7 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
+
+
+
+
++ OSVDB-3268: /config/: Directory indexing found.
++ /config/: Configuration information may be available remotely.
+
+
+we get a config dir which is the answer of 9
+
+answer of 11 is
+--list-Plugins
+
+answer of 12 is 
+-Plugins outdated
+
+and of 13 is 
+-Plugins tests
+
+
+
+in the part of the task 3 we have to make a scan on the ip provided to us
+
+
+#4
+ZAP will discover a file that typically contains pages which well-behaved web indexing engines will read in order to know which sections of a site to avoid. What is the name of this file? (Lucky for us, our scanner isn't what we would call 'well-behaved'!)
+------>robots.txt
+#6 	
+ZAP will find a directory that contains images for our application, what is the path for that directory? (This is what will follows the name/ip of the website)
+------>/dvwa/images
+
+#7
+This website doesn't force a secure connection by default and ZAP isn't pleased with it. Which related cookie is ZAP upset about?
+-->>>httponly
+
+#8
+-------->Web Browser XSS Protection Not Enabled
+
+#9
+------->http://www.dvwa.co.uk/
+
+#10
+------>get
+
+#11
+------>post
