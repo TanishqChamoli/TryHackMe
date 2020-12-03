@@ -1,0 +1,31 @@
+Ip:
+	10.10.76.218
+The homepage is login form when we create a new user and then we login using the creds a new cookie is created under the name of auth:
+	original cookie:7b22636f6d70616e79223a22546865204265737420466573746976616c20436f6d70616e79222c2022757365726e616d65223a2274616e676f5f646576227d
+	decoded cookie:{"company":"The Best Festival Company", "username":"tango_dev"}
+
+We want to login as the santa user so we can change the username in the cookie and then decode it and replace the old cookie with our own
+	new cookie:{"company":"The Best Festival Company", "username":"santa"}
+
+	the cookie comes out be:7b22636f6d70616e79223a22546865204265737420466573746976616c20436f6d70616e79222c2022757365726e616d65223a2273616e7461227d
+
+Now we are gonna login as Santa and then after switching all the options on
+we get the flag like:
+THM{--------------------}
+
+Answers:
+
+1.Register for an account, and then login.What is the name of the cookie used for authentication?
+	auth
+
+2.In what format is the value of this cookie encoded?
+	hexadecimal
+
+3.Having decoded the cookie, what format is the data stored in?
+	JSON
+
+4.Figure out how to bypass the authentication.What is the value of Santa's cookie?
+	7b22636f6d70616e79223a22546865204265737420466573746976616c20436f6d70616e79222c2022757365726e616d65223a2273616e7461227d
+
+5.Now that you are the santa user, you can re-activate the assembly line!What is the flag you're given when the line is fully active?
+	----The flag to be inserted----
